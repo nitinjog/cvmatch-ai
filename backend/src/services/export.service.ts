@@ -10,7 +10,9 @@ function htmlToSections(html: string): Array<{ type: 'h2' | 'h3' | 'p' | 'li'; t
   let match;
 
   while ((match = tagPattern.exec(html)) !== null) {
-    const tag = match[1].toLowerCase() as 'h2' | 'h3' | 'p' | 'li';
+    const rawTag = match[1].toLowerCase();
+    const type: 'h2' | 'h3' | 'p' | 'li' =
+      rawTag === 'ul' ? 'p' : (rawTag as 'h2' | 'h3' | 'p' | 'li');
     const text = match[2]
       .replace(/<[^>]+>/g, '') // strip inner tags
       .replace(/&amp;/g, '&')
@@ -20,7 +22,7 @@ function htmlToSections(html: string): Array<{ type: 'h2' | 'h3' | 'p' | 'li'; t
       .trim();
 
     if (text) {
-      sections.push({ type: tag === 'ul' ? 'p' : tag, text });
+      sections.push({ type, text });
     }
   }
 
