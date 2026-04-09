@@ -1,4 +1,10 @@
 {
+  "name": "cvmatch-ai",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "cd backend && npm install --include=dev && npm run build",
+    "start": "cd backend && npm start"
+  },
   "dependencies": {
     "pg": "^8.20.0"
   }
