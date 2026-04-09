@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 
+import { runMigration } from './utils/migrate';
 import jdRoutes from './routes/jd.routes';
 import cvRoutes from './routes/cv.routes';
 import analyzeRoutes from './routes/analyze.routes';
@@ -64,6 +65,8 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 
 app.listen(PORT, () => {
   console.log(`CVMatch AI backend running on port ${PORT}`);
+  // Run DB migration on startup (non-blocking, non-fatal)
+  runMigration().catch(() => {/* already logged inside */});
 });
 
 export default app;
