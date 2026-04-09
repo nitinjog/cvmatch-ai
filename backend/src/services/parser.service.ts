@@ -1,4 +1,6 @@
-import pdfParse from 'pdf-parse';
+// Use lib path directly to avoid pdf-parse running its test fixtures at startup
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const pdfParse = require('pdf-parse/lib/pdf-parse.js') as (buffer: Buffer) => Promise<{ text: string }>;
 import mammoth from 'mammoth';
 import path from 'path';
 
