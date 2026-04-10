@@ -26,7 +26,7 @@ const genAI = process.env.GEMINI_API_KEY
 async function callGemini(prompt: string): Promise<string> {
   if (!genAI) throw new Error('Gemini API key not configured');
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-04-17' });
   const result = await model.generateContent(prompt);
   return result.response.text();
 }
@@ -37,7 +37,7 @@ async function callOpenRouter(prompt: string): Promise<string> {
   const response = await axios.post(
     'https://openrouter.ai/api/v1/chat/completions',
     {
-      model: 'google/gemini-2.5-flash:free',
+      model: 'google/gemini-2.5-flash-preview-05-20:free',
       messages: [{ role: 'user', content: prompt }],
     },
     {
@@ -57,11 +57,17 @@ async function callLLM(prompt: string): Promise<string> {
   try {
     return await callGemini(prompt);
   } catch (geminiError) {
-    console.warn('Gemini failed, trying OpenRouter:', (geminiError as Error).message);
+    const geminiMsg = (geminiError as any)?.message || String(geminiError);
+    console.warn('Gemini failed, trying OpenRouter:', geminiMsg);
     try {
       return await callOpenRouter(prompt);
     } catch (openRouterError) {
-      throw new Error(`All LLM providers failed. Last error: ${(openRouterError as Error).message}`);
+      const orErr = openRouterError as any;
+      const orMsg = orErr?.response?.data
+        ? JSON.stringify(orErr.response.data)
+        : orErr?.message || String(openRouterError);
+      console.error('OpenRouter failed:', orMsg);
+      throw new Error(`All LLM providers failed. Gemini: ${geminiMsg} | OpenRouter: ${orMsg}`);
     }
   }
 }
