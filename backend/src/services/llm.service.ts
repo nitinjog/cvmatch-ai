@@ -26,7 +26,7 @@ const genAI = process.env.GEMINI_API_KEY
 async function callGemini(prompt: string): Promise<string> {
   if (!genAI) throw new Error('Gemini API key not configured');
 
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-04-17' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
   const result = await model.generateContent(prompt);
   return result.response.text();
 }
@@ -37,7 +37,7 @@ async function callOpenRouter(prompt: string): Promise<string> {
   const response = await axios.post(
     'https://openrouter.ai/api/v1/chat/completions',
     {
-      model: 'google/gemini-2.5-flash-preview-05-20:free',
+      model: 'google/gemini-2.0-flash-001',
       messages: [{ role: 'user', content: prompt }],
     },
     {
